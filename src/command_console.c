@@ -22,13 +22,17 @@ int main(int argc, char const *argv[])
 	{	
         // Get mouse/resize commands in non-blocking mode...
         int cmd = getch();
-        int fd,fd2; 
+        //file descriptors for the named pipes
+	int fd,fd2; 
+	//named pipe
         char * send = "/tmp/myfifo";
         mkfifo(send, 0666);
-        char * send2 = "/tmp/myfifo3";
+        //named pipe
+	char * send2 = "/tmp/myfifo3";
         mkfifo(send2, 0666);
         char inpt[80];
-        fd = open(send, O_WRONLY);
+        //open pipes for writing 
+	fd = open(send, O_WRONLY);
         fd2 = open(send2, O_WRONLY);
         // If user resizes screen, re-draw UI
         if(cmd == KEY_RESIZE) {
@@ -47,8 +51,10 @@ int main(int argc, char const *argv[])
 
                 // Vx++ button pressed
                 if(check_button_pressed(vx_incr_btn, &event)){ 
-                    strncpy(inpt,"Vx++",10);
-                    write(fd, inpt, strlen(inpt)+1); 
+                    //put Vx++ into input variable
+		    strncpy(inpt,"Vx++",10);
+                    //writing input to the first named pipe
+		    write(fd, inpt, strlen(inpt)+1); 
                     
                     mvprintw(LINES - 1, 1, "Horizontal Speed Increased");
                     //refresh();
@@ -60,10 +66,10 @@ int main(int argc, char const *argv[])
 
                 // Vx-- button pressed
                 else if(check_button_pressed(vx_decr_btn, &event)) {
-                    //fd = open(send, O_WRONLY); 
+                    // put Vx-- into input variable
                     strncpy(inpt,"Vx--",10);
+                    //writing input to the first named pipe
                     write(fd, inpt, strlen(inpt)+1); 
-                    //close(fd);
 
                     mvprintw(LINES - 1, 1, "Horizontal Speed Decreased");
                     refresh();
@@ -85,10 +91,10 @@ int main(int argc, char const *argv[])
 
                 // Vz++ button pressed
                 else if(check_button_pressed(vz_incr_btn, &event)) {
-                    //fd2 = open(send2, O_WRONLY); 
+                    //put Vz++ into input variable
                     strncpy(inpt,"Vz++",10);
+                    //writing input to the second named pipe
                     write(fd2, inpt, strlen(inpt)+1); 
-                    //close(fd2);
                     
                     mvprintw(LINES - 1, 1, "Vertical Speed Increased");
                     refresh();
@@ -100,10 +106,11 @@ int main(int argc, char const *argv[])
 
                 // Vz-- button pressed
                 else if(check_button_pressed(vz_decr_btn, &event)) {
-                    //fd2 = open(send2, O_WRONLY); 
+                    //put Vz-- into input variable
                     strncpy(inpt,"Vz--",10);
+                    //writing input to the second named pipe
                     write(fd2, inpt, strlen(inpt)+1); 
-                    //close(fd2);
+                    
                     mvprintw(LINES - 1, 1, "Vertical Speed Decreased");
                     refresh();
                     sleep(1);
@@ -125,6 +132,7 @@ int main(int argc, char const *argv[])
         }
 
         refresh();
+	//closing file descriptors associated with the named pipes
         close(fd);
         close(fd2);
     }    
